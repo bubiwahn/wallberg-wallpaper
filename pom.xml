@@ -125,7 +125,7 @@
            <path>${project.basedir}/src/main/groovy</path>
            <path>${project.basedir}/src/main/resources</path>
           </scriptpath>
-          <source>${project.basedir}/src/main/groovy/wallberg.groovy</source>
+          <source>${project.basedir}/src/main/groovy/tv/wallberg/wallberg.groovy</source>
         </configuration>
 				<dependencies>
           <dependency>

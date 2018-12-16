@@ -1,3 +1,4 @@
+package tv.wallberg
 
 def name = "AA"
 
