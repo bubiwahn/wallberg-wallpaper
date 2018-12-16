@@ -1,6 +1,7 @@
+package tv.wallberg
 import java.time.*
 import java.time.temporal.ChronoUnit
-import LeadingZero
+
 import groovy.cli.commons.CliBuilder
 
 def String[] args;
