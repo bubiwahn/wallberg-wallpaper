@@ -8,7 +8,7 @@ With that, there is everything in place for effective groovy development (with c
 
 After setting up the enviroment and cloning the repository:
 * `mvn clean install` builds the project
-* `mnv groovy:execute@run` executes the script via maven using the maven-groovy plugin
+* `mvn groovy:execute@run` executes the script via maven using the maven-groovy plugin
 
 Then simply import the project in Eclipse as "existing project".
 
