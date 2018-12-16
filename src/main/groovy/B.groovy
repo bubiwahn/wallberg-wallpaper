@@ -1,0 +1,3 @@
+
+
+println new A()
