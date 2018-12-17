@@ -91,7 +91,7 @@ LocalDateTime downloadData() {
 void setWallpaper() {
 
   // extract powershell script from class path
-  URL scriptUrl = this.getClass().getResource("${script}")
+  URL scriptUrl = this.getClass().getClassLoader().getResource("${script}")
   File scriptFile = new File("${tempdir}/${script}")
   println "extract script ${scriptUrl} to ${scriptFile}"
   use( FileBinaryCategory ) {
