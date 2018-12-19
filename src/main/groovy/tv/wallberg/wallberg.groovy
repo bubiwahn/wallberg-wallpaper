@@ -37,7 +37,7 @@ if (osName.contains("linux")) { tempdir = "/mnt/c/temp" }
 println "tempdir is ${tempdir}" 
 
 source = options.u ? options.u : "http://www.foto-webcam.org/webcam/wallberg/"
-image = options.f ? options.f : "wallpaper.jpg"
+image = options.f ? options.f : "wallberg.jpg"
 script = "setwallpaper.ps1"
 
 // proxy settings
@@ -50,8 +50,6 @@ LocalDateTime downloadData() {
 
   def zone = ZoneId.of("Europe/Berlin")
   def now = LocalDateTime.now(zone)
-  println "current download at ${now} in timezone ${zone} ... "
-
   def year = now.getYear()
   def month = LeadingZero.prepend(now.getMonth().getValue())
   def date = LeadingZero.prepend(now.getDayOfMonth())
@@ -59,7 +57,7 @@ LocalDateTime downloadData() {
   def minute = now.getMinute()
   minute = LeadingZero.prepend(minute - (minute % 10))
 
-  println "date: ${year}-${month}-${date}, ${hour}:${minute}"
+  println "current download at ${now} in timezone ${zone}, date: ${year}-${month}-${date}, ${hour}:${minute}"
 
   def source = new URL( "${source}${year}/${month}/${date}/${hour}${minute}_hu.jpg" )
   def target = new File( "${tempdir}/${image}" )
@@ -93,15 +91,16 @@ void setWallpaper() {
   // extract powershell script from class path
   URL scriptUrl = this.getClass().getClassLoader().getResource("${script}")
   File scriptFile = new File("${tempdir}/${script}")
-  println "extract script ${scriptUrl} to ${scriptFile}"
+  println "extract script ${scriptUrl} to ${scriptFile} ..."
   use( FileBinaryCategory ) {
 	  scriptFile << scriptUrl
   }
+  println "done."
   
   // call powershell script to set wallpaper
   def scriptPs = "${tempdirWin}/${script}"
   def imagePs = "${tempdirWin}/${image}"
-  print "set local file '${imagePs}' as wallpaper using script '${scriptPs}' ... "
+  println "set local file '${imagePs}' as wallpaper using script '${scriptPs}' ... "
   Process process = "powershell.exe -ExecutionPolicy Bypass -file  ${scriptPs} ${imagePs}".execute()
   int result = process.waitFor();
   if (result == 0)
@@ -118,7 +117,6 @@ void delayExecution(LocalDateTime now) {
   def delay = now.until(then, ChronoUnit.MILLIS)
   println "next download at ${then} i.e. in ${delay / 1000} sec. ... "
   sleep(delay);
-  println "done."
 }
 
 // main loop ...
