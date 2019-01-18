@@ -45,11 +45,17 @@ System.getProperties().put("proxySet", "true");
 System.getProperties().put("proxyHost", "192.168.2.105");
 System.getProperties().put("proxyPort", "3128");
 
-/** download data from site */
-LocalDateTime downloadData() {
 
-  def zone = ZoneId.of("Europe/Berlin")
-  def now = LocalDateTime.now(zone)
+LocalDateTime getNow () {
+	def zone = ZoneId.of("Europe/Berlin")
+	def now = LocalDateTime.now(zone)
+	println "current download at ${now} in timezone ${zone}"
+	return now;	
+}
+
+/** download data from site */
+Boolean downloadData(LocalDateTime now) {
+  
   def year = now.getYear()
   def month = LeadingZero.prepend(now.getMonth().getValue())
   def date = LeadingZero.prepend(now.getDayOfMonth())
@@ -57,7 +63,7 @@ LocalDateTime downloadData() {
   def minute = now.getMinute()
   minute = LeadingZero.prepend(minute - (minute % 10))
 
-  println "current download at ${now} in timezone ${zone}, date: ${year}-${month}-${date}, ${hour}:${minute}"
+//  println "calculated date parts: ${year}-${month}-${date}, ${hour}:${minute}"
 
   def source = new URL( "${source}${year}/${month}/${date}/${hour}${minute}_hu.jpg" )
   def target = new File( "${tempdir}/${image}" )
@@ -72,11 +78,11 @@ LocalDateTime downloadData() {
     }
     if ( target.length() > 2000) {
       println "done."
-	  return now
+	  return true
     }
 	if ( i >= 10) {
 	  println "no image available, skipped."
-	  return null
+	  return false
 	}
   
     println "try again (${i}) ..."
@@ -111,7 +117,6 @@ void setWallpaper() {
 
 /** wait until next image is available */
 void delayExecution(LocalDateTime now) {
-
   // define "then" as "the last time with full 10 min. before now plus 10 min 30 sec."
   def then = now.minusMinutes(now.getMinute() % 10).plusMinutes(10).minusSeconds(now.getSecond()).plusSeconds(30)
   def delay = now.until(then, ChronoUnit.MILLIS)
@@ -121,8 +126,7 @@ void delayExecution(LocalDateTime now) {
 
 // main loop ...
 while (true) {
-  // now == current dateTime if download was successful else now == null
-  def now = downloadData()
-  if (now != null) setWallpaper()
+  def now = getNow()
+  if(downloadData(now)) setWallpaper()
   delayExecution(now)
 }
