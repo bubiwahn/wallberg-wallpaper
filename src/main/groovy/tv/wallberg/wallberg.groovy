@@ -55,40 +55,45 @@ LocalDateTime getNow () {
 
 /** download data from site */
 Boolean downloadData(LocalDateTime now) {
-  
-  def year = now.getYear()
-  def month = LeadingZero.prepend(now.getMonth().getValue())
-  def date = LeadingZero.prepend(now.getDayOfMonth())
-  def hour = LeadingZero.prepend(now.getHour())
-  def minute = now.getMinute()
-  minute = LeadingZero.prepend(minute - (minute % 10))
+	def year = now.getYear()
+	def month = LeadingZero.prepend(now.getMonth().getValue())
+	def date = LeadingZero.prepend(now.getDayOfMonth())
+	def hour = LeadingZero.prepend(now.getHour())
+	def minute = now.getMinute()
+	minute = LeadingZero.prepend(minute - (minute % 10))
 
-//  println "calculated date parts: ${year}-${month}-${date}, ${hour}:${minute}"
-
-  def source = new URL( "${source}${year}/${month}/${date}/${hour}${minute}_hu.jpg" )
-  def target = new File( "${tempdir}/${image}" )
-
-  // download URL located image to local file  
-  println "downloading: '${source}' -> '${target}' ... "
-  target.delete()
-  int i = 0
-  while (true) {
-    use( FileBinaryCategory ) {
-      target << source
-    }
-    if ( target.length() > 2000) {
-      println "done."
-	  return true
-    }
-	if ( i >= 10) {
-	  println "no image available, skipped."
-	  return false
+	//  println "calculated date parts: ${year}-${month}-${date}, ${hour}:${minute}"
+	def source = new URL( "${source}${year}/${month}/${date}/${hour}${minute}_hu.jpg" )
+	def target = new File( "${tempdir}/${image}" )
+	
+	// download URL located image to local file  
+	println "downloading: '${source}' -> '${target}' ... "
+	target.delete()
+	int i = 0
+	boolean resourceAvailable = true
+	while (true) {
+		try {
+			use( FileBinaryCategory ) {
+				target << source
+			}
+		}
+		catch (FileNotFoundException fileNotFoundException) {
+			println fileNotFoundException
+			println fileNotFoundException.getStackTrace()
+		}
+		if (resourceAvailable && target.length() > 2000) {
+			println "download done."
+			return true
+		}
+		if ( i >= 10) {
+			println "number of attemps exceeded, download skipped."
+			return false
+		}
+		
+		println "try again (${i}) ..."
+		sleep(20000)
+		i++
 	}
-  
-    println "try again (${i}) ..."
-    sleep(20000)
-	i++
-  }
 }
 
 /** set wallpaper on windows desktop */
