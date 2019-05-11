@@ -79,7 +79,6 @@ Boolean downloadData(LocalDateTime now) {
 		}
 		catch (FileNotFoundException fileNotFoundException) {
 			println fileNotFoundException
-			println fileNotFoundException.getStackTrace()
 		}
 		if (resourceAvailable && target.length() > 2000) {
 			println "download done."
